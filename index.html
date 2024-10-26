@@ -1,0 +1,1131 @@
+<!--
+author: W3layouts
+author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Shakti Tours and Travels | Explore Odisha's Best Destinations</title>
+	<!-- custom-theme -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords"
+		content="Odisha Tours, Odisha Travel, Puri Jagannath Temple Tour, Konark Sun Temple Tour, Chilika Lake Tour, Odisha Tourist Spots, Odisha Travel Agency, Bhubaneswar Tours, Cuttack Tours, Odisha Heritage Tours, Simlipal National Park Tour, Odisha Beach Tours, Odisha Pilgrimage Tour, Odisha Holiday Packages, Odisha Sightseeing, Best Travel Service in Odisha, Shakti Travels, Odisha Adventure Tours, Odisha Wildlife Safari, Odisha Car Rental Services, Odisha Guided Tours" />
+
+	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
+        function hideURLbar(){ window.scrollTo(0,1); } </script>
+
+	<link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" /><!-- bootstrap-css -->
+
+	<link href="css/owl.carousel.css" rel="stylesheet"><!-- Owl-carousel-CSS -->
+
+	<link href="css/popup-box.css" rel="stylesheet" type="text/css" media="all" /><!-- pop-up css -->
+
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+
+	<!-- banner css -->
+	<link rel="stylesheet" href="css/poposlides.css" type="text/css" media="all" />
+	<!-- //banner css -->
+
+	<!-- font-awesome-icons -->
+	<link rel="stylesheet" href="css/font-awesome.min.css" />
+	<!-- //font-awesome-icons -->
+
+	<!-- google fonts -->
+	<link
+		href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900,900i&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+		rel="stylesheet">
+	<link
+		href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+		rel="stylesheet">
+	<!-- //google fonts -->
+	<!-- Firebase App (the core Firebase SDK) -->
+	<script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js"></script>
+	<!-- Firebase Firestore -->
+	<script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js"></script>
+
+	<script type="module">
+
+		function openDialer() {
+			if (contactNumber) {
+				window.location.href = `tel:${contactNumber}`;
+			} else {
+				alert("Phone number not available.");
+			}
+		}
+
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
+		import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js";
+
+		// Your web app's Firebase configuration
+		const firebaseConfig = {
+			apiKey: "AIzaSyCaai3UqjrZI_H3EhiM4VW8MmBroCxm8fQ",
+			authDomain: "lordjagannathtoursandtra-671aa.firebaseapp.com",
+			projectId: "lordjagannathtoursandtra-671aa",
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const db = getFirestore(app);
+
+		async function saveBookingToFirestore(bookingData) {
+			try {
+				// Add booking to Firestore
+				await addDoc(collection(db, "bookings"), bookingData);
+				alert("Booking successful!");
+			} catch (error) {
+				console.error("Error saving booking: ", error);
+				alert("Failed to save booking. Please try again.");
+			}
+		}
+
+		function handleBookingFormSubmission() {
+			document.getElementById("bookingForm").addEventListener("submit", async function (event) {
+				event.preventDefault(); // Prevent default form submission
+
+				// Collect form data
+				const travellerName = document.getElementById("travellerName").value;
+				const destination = document.getElementById("destination").value;
+				const tripStart = document.getElementById("tripStart").value;
+				const tripEnd = document.getElementById("tripEnd").value;
+				const phone = document.getElementById("phone").value; // New field
+				const travellers = document.getElementById("travellers").value; // New field
+
+				// Create a booking object with the new fields
+				const bookingData = {
+					travellerName: travellerName,
+					travelPlace: destination,
+					startDate: tripStart,
+					returnDate: tripEnd,
+					phone: phone, // New field
+					travellers: travellers, // New field
+					timestamp: new Date() // Save the timestamp of booking
+				};
+
+				// Save booking data to Firestore
+				await saveBookingToFirestore(bookingData);
+
+				// Reset the form
+				document.getElementById("bookingForm").reset();
+			});
+		}
+
+
+		// Function to fetch and display testimonials
+		const fetchTestimonials = async () => {
+			const loader = document.getElementById("loader");
+			const testimonialContainer = document.getElementById("owl-demo2");
+
+			try {
+				loader.style.display = "block"; // Show loader while fetching testimonials
+
+				// Fetch testimonials from Firestore
+				const querySnapshot = await getDocs(collection(db, "testimonials"));
+
+				if (querySnapshot.empty) {
+					loader.style.display = "none";
+					testimonialContainer.innerHTML = "<p>No testimonials found.</p>";
+					return;
+				}
+
+				// Loop through the fetched testimonials and add them to the carousel
+				querySnapshot.forEach((doc) => {
+					const data = doc.data();
+					console.log("Fetched data: ", data); // Debugging to see if data is fetched
+
+					// Append testimonial HTML to the container
+					const testimonialHTML = `
+                        <div class="agile">
+                            <div class="test-grid">
+                                <div class="test-grid1">
+                                    <div class="test-grid2">
+                                        <img src="${data.imageUrl}" alt="${data.authorName}" class="img-r" style="max-width: 150px; max-height: 150px;" />
+                                    </div>
+                                    <div class="test-grid2_text">
+                                        <h4>${data.authorName}</h4>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <p class="para-w3-agile">${data.content}</p>
+                                <i class="fa fa-quote-left" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    `;
+					testimonialContainer.insertAdjacentHTML("beforeend", testimonialHTML);
+				});
+
+				loader.style.display = "none"; // Hide the loader after loading testimonials
+
+				// Initialize Owl Carousel after content is added
+				$('#owl-demo2').owlCarousel({
+					items: 1,
+					lazyLoad: false,
+					autoPlay: true,
+					navigation: false,
+					pagination: true,
+				});
+
+			} catch (error) {
+				console.error("Error fetching testimonials: ", error);
+				loader.style.display = "none";
+				testimonialContainer.innerHTML = "<p>Error loading testimonials. Please try again later.</p>";
+			}
+		};
+		let contactNumber = "";
+
+		const fetchContactInfo = async () => {
+			try {
+				const contactSnapshot = await getDocs(collection(db, "contactInfo"));
+				if (!contactSnapshot.empty) {
+					contactSnapshot.forEach((doc) => {
+						const data = doc.data();
+						contactNumber = data.phone;
+					});
+				}
+			} catch (error) {
+				console.error("Error fetching contact info: ", error);
+			}
+		};
+
+		async function fetchServices() {
+			try {
+				// Reference to the services collection
+				const servicesCollection = collection(db, "services");
+				const serviceSnapshot = await getDocs(servicesCollection);
+				const services = serviceSnapshot.docs.map((doc) => doc.data());
+
+				// Dynamically populate the services grid
+				const servicesGrid = document.getElementById("services-grid");
+
+				// Clear any existing services to prevent duplication
+				servicesGrid.innerHTML = "";
+
+				// Set the fixed card and image size
+				const cardHeight = "350px"; // Example card height, can be adjusted
+				const imageWidth = "250px"; // Fixed image width
+				const imageHeight = "150px"; // Fixed image height
+				const cardMargin = "15px"; // Space between cards
+
+				// Loop through the fetched services and create the HTML for each
+				services.forEach((service, index) => {
+					// Calculate the correct `about` class number for each card (1, 2, 3 repeating)
+					const aboutIndex = (index % 3) + 1;
+
+					const serviceHTML = `
+                <div class="col-md-4 col-xs-6 w3ls-about-grid about-${aboutIndex}" 
+                     style="display: flex; flex-direction: column; justify-content: space-between; 
+                            height: ${cardHeight}; border: 1px solid #ddd; padding: 10px; 
+                            box-sizing: border-box; margin-bottom: ${cardMargin};">
+                    <div style="flex-grow: 1;">
+                        <img src="${service.image}" alt="${service.title}" aria-hidden="true" 
+                             class="img-r" style="width: ${imageWidth}; height: ${imageHeight}; 
+                             object-fit: cover; margin-bottom: 10px;">
+                        <h6 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                            ${service.title}
+                        </h6>
+                        <p style="font-size: 14px; color: #555; overflow: hidden; text-overflow: ellipsis;">
+                            ${service.content}
+                        </p>
+                    </div>
+                </div>
+            `;
+					servicesGrid.insertAdjacentHTML("beforeend", serviceHTML);
+				});
+			} catch (error) {
+				console.error("Error fetching services: ", error);
+			}
+		}
+
+
+		function handleContactFormSubmission() {
+			const form = document.getElementById("contactForm");
+
+			form.addEventListener("submit", async function (event) {
+				event.preventDefault(); // Prevent default form submission
+
+				// Collect form data
+				const contactName = document.getElementById("contactName").value;
+				const contactEmail = document.getElementById("contactEmail").value;
+				const contactPhone = document.getElementById("contactPhone").value;
+				const contactMessage = document.getElementById("contactMessage").value;
+
+				// Create a contact object
+				const contactData = {
+					name: contactName,
+					email: contactEmail,
+					phone: contactPhone,
+					message: contactMessage,
+					timestamp: new Date() // Add a timestamp field
+				};
+
+				// Save the contact data to Firestore
+				try {
+					await addDoc(collection(db, "contacts"), contactData);
+					alert("Contact submission successful!");
+					form.reset(); // Reset the form after submission
+				} catch (error) {
+					console.error("Error saving contact: ", error);
+					alert("Failed to submit contact form. Please try again.");
+				}
+			});
+		}
+		function handleSubscribeFormSubmission() {
+			const subscribeForm = document.getElementById("subscribeForm");
+
+			subscribeForm.addEventListener("submit", async function (event) {
+				event.preventDefault(); // Prevent form's default submission behavior
+
+				const email = document.getElementById("subscribeEmail").value;
+
+				// Create subscription object
+				const subscriptionData = {
+					email: email,
+					timestamp: new Date(), // Save the time of subscription
+				};
+
+				try {
+					// Save subscription data to Firestore
+					await addDoc(collection(db, "subscribedUsers"), subscriptionData);
+
+					// Show success message
+					alert("Subscription successful!");
+
+					// Clear the form
+					subscribeForm.reset();
+				} catch (error) {
+					console.error("Error saving subscription: ", error);
+					alert("Subscription failed. Please try again.");
+				}
+			});
+		}
+
+		async function fetchPackages() {
+			const packagesGrid = document.getElementById("packages-grid");
+			const destinationDropdown = document.getElementById("destination"); // Dropdown for main form
+			const travelLocationDropdown = document.getElementById("popupDestination"); // Dropdown for popup form
+
+			try {
+				// Fetching packages from Firestore
+				const querySnapshot = await getDocs(collection(db, "packages"));
+				let packageHTML = `
+        <div class="packages_grid1">
+    `;
+
+				destinationDropdown.innerHTML = ""; // Clear main form dropdown
+				travelLocationDropdown.innerHTML = ""; // Clear popup form dropdown
+				let count = 0; // To track the number of packages added
+				querySnapshot.forEach((doc) => {
+					const data = doc.data();
+					if (count < 2) {
+						// Add the first two packages to the first grid (3 columns, left side)
+						packageHTML += `
+            <div class="col-md-3 package1">
+                <img src="${data.image}" alt="${data.title}" />
+                <h4>${data.title}</h4>
+                <a href="#small-dialog" class="w3_agileits_sign_up2 popup-with-zoom-anim ab scroll">Book Now</a>
+            </div>
+        `;
+					} else if (count === 2) {
+						// The third package is displayed as a large image (6 columns)
+						packageHTML += `
+            <div class="col-md-6 package1">
+                <img src="${data.image}" alt="${data.title}" />
+            </div>
+            <div class="clearfix"></div>
+        `;
+					}
+					count++;
+					destinationDropdown.insertAdjacentHTML('beforeend', `<option value="${data.title}">${data.title}</option>`);
+					travelLocationDropdown.insertAdjacentHTML('beforeend', `<option value="${data.title}">${data.title}</option>`);
+
+				});
+
+				packageHTML += `</div><div class="packages_grid2">`;
+
+				count = 0;
+				querySnapshot.forEach((doc) => {
+					const data = doc.data();
+					if (count === 0) {
+						// First package of the second row is large (6 columns)
+						packageHTML += `
+            <div class="col-md-6 package1">
+                <img src="${data.image}" alt="${data.title}" />
+            </div>
+        `;
+					} else if (count < 3) {
+						// Next two packages are small (3 columns each)
+						packageHTML += `
+            <div class="col-md-3 package1">
+                <img src="${data.image}" alt="${data.title}" />
+                <h4>${data.title}</h4>
+                <a href="#small-dialog" class="w3_agileits_sign_up2 popup-with-zoom-anim ab scroll">Book Now</a>
+            </div>
+        `;
+					}
+					count++;
+				});
+
+				packageHTML += `
+        <div class="clearfix"></div>
+        </div>
+    `;
+				// Insert the generated HTML into the packages grid
+				packagesGrid.innerHTML = packageHTML;
+
+				// Re-initialize the modal after inserting dynamic content
+				$('.popup-with-zoom-anim').magnificPopup({
+					type: 'inline',
+					fixedContentPos: false,
+					fixedBgPos: true,
+					overflowY: 'auto',
+					closeBtnInside: true,
+					preloader: false,
+					midClick: true,
+					removalDelay: 300,
+					mainClass: 'my-mfp-zoom-in'
+				});
+
+			} catch (error) {
+				console.error("Error fetching packages: ", error);
+				packagesGrid.innerHTML = "<p>Error loading packages. Please try again later.</p>";
+			}
+		}
+
+		function handlePopupFormSubmission() {
+			document.getElementById("popupBookingForm").addEventListener("submit", async function (event) {
+				event.preventDefault(); // Prevent default form submission
+
+				// Collect form data from the popup form
+				const travellerName = document.getElementById("popupTravellerName").value;
+				const destination = document.getElementById("popupDestination").value;
+				const tripStart = document.getElementById("popupTripStart").value;
+				const tripEnd = document.getElementById("popupTripEnd").value;
+				const email = document.getElementById("popupEmail").value;
+				const phone = document.getElementById("popupPhone").value;
+				const travellers = document.getElementById("popupTravellers").value;
+
+				// Create a booking object with the collected data
+				const bookingData = {
+					travellerName: travellerName,
+					travelPlace: destination,
+					startDate: tripStart,
+					returnDate: tripEnd,
+					email: email,
+					phone: phone,
+					travellers: travellers,
+					timestamp: new Date() // Save the timestamp of booking
+				};
+
+				try {
+					// Save booking data to Firestore
+					await addDoc(collection(db, "bookings"), bookingData);
+					alert("Booking successful!");
+
+					// Close the modal after successful booking
+					$.magnificPopup.close();
+
+					// Reset the form
+					document.getElementById("popupBookingForm").reset();
+				} catch (error) {
+					console.error("Error saving booking: ", error);
+					alert("Failed to save booking. Please try again.");
+				}
+			});
+		}
+
+		// Call the form submission handler when the DOM is loaded
+		window.addEventListener("DOMContentLoaded", handlePopupFormSubmission);
+
+
+		//Call fetchPackages once the DOM is loaded
+		window.addEventListener("DOMContentLoaded", fetchPackages);
+
+
+		//Call the form submission handler when DOM is loaded
+		window.addEventListener("DOMContentLoaded", handleBookingFormSubmission);
+		// Call the function to handle form submission
+		window.addEventListener("DOMContentLoaded", handleSubscribeFormSubmission);
+		// Call the form submission handler when DOM is loaded
+		window.addEventListener("DOMContentLoaded", handleContactFormSubmission);
+		// Call fetchServices once the DOM is loaded
+		window.addEventListener("DOMContentLoaded", fetchServices);
+		// Call contactInfo once the DOM is loaded
+		window.addEventListener("DOMContentLoaded", fetchContactInfo);
+		// Fetch testimonials when the DOM is fully loaded
+		window.addEventListener("DOMContentLoaded", fetchTestimonials);
+	</script>
+
+	<script>
+		$(function () {
+			$(".date.has").datepicker({
+				dateFormat: "dd/mm/yy" // Set the desired date format
+			});
+		});
+	</script>
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+	<!--/main-header-->
+	<div class="demo-inner-content" id="home">
+		<div class="main_agileits">
+			<!--/banner-info-->
+			<!-- header -->
+			<div class="header-w3layouts">
+				<!-- Navigation -->
+				<nav class="navbar navbar-default navbar-fixed-top">
+					<div class="container">
+						<div class="navbar-header page-scroll">
+							<button type="button" class="navbar-toggle" data-toggle="collapse"
+								data-target=".navbar-ex1-collapse">
+								<span class="sr-only">Shakti Tours and Travels</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+							<h1>
+								<a class="navbar-brand" href="index.html">
+									<img src="images/shaktiTravels.png" alt="Shakti Travels"
+										style="max-height: 80px;" />
+								</a>
+							</h1>
+						</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse navbar-ex1-collapse">
+							<ul class="nav navbar-nav navbar-right cl-effect-15">
+								<!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+								<li class="hidden"><a class="page-scroll" href="#page-top"></a> </li>
+								<li><a class="page-scroll scroll" href="#home">Home</a></li>
+								<li><a class="page-scroll scroll" href="#about">About Us</a></li>
+								<li><a class="page-scroll scroll" href="#packages">Our Packages</a></li>
+								<li><a class="page-scroll scroll" href="#testimonials">Testimonials</a></li>
+								<li><a class="page-scroll scroll" href="#stats">Stats</a></li>
+								<li><a class="page-scroll scroll" href="#contact">Contact Us</a></li>
+							</ul>
+						</div>
+						<!-- /.navbar-collapse -->
+					</div>
+					<!-- /.container -->
+				</nav>
+			</div>
+			<!-- //header -->
+
+			<!-- banner info-->
+			<div class="w3-banner-head-info">
+				<div class="container">
+					<div class="banner-text">
+						<span class="fa fa-car" aria-hidden="true" style="color: white; font-size: 20px;"></span>
+						<h2 class="editContent">Explore Odisha with </br> Shakti Tours and Travels</h2>
+						<p>Your gateway to an unforgettable journey through the wonders of Odisha. From Puri to Chilika,
+							Simlipal, and more, experience the rich culture, heritage, and adventure of Odisha with our
+							expertly crafted travel packages.</p>
+						<div class="book-form clearfix">
+							<form id="bookingForm" class="row">
+								<!-- Row 1: Traveller Name, Phone Number -->
+								<div class="col-md-4 col-sm-6 form-group">
+									<label><span class="fa fa-user" aria-hidden="true"></span> Traveller Name</label>
+									<input type="text" id="travellerName" class="form-control"
+										placeholder="Enter your name" required>
+								</div>
+								<div class="col-md-4 col-sm-6 form-group">
+									<label><span class="fa fa-phone" aria-hidden="true"></span> Phone Number</label>
+									<input type="tel" id="phone" class="form-control"
+										placeholder="Enter your phone number" required
+										style="outline: none; font-size: 0.9em; padding: 7px 10px; letter-spacing: 1px; border-radius: 5px; width: 100%; line-height: 25px; background: #333; color: #9a9797; border: 2px solid #fff; box-shadow: none !important;">
+								</div>
+
+
+								<div class="col-md-4 col-sm-6 form-group">
+									<label><span class="fa fa-map-marker" aria-hidden="true"></span> Destination</label>
+									<select class="form-control" id="destination" required>
+										<option>Puri - Jagannath Temple</option>
+										<option>Konark - Sun Temple</option>
+										<option>Chilika Lake</option>
+										<option>Simlipal National Park</option>
+										<option>Bhitarkanika Wildlife Sanctuary</option>
+									</select>
+								</div>
+
+								<!-- Row 2: Destination, Trip Start -->
+								<div class="col-md-4 col-sm-6 form-group">
+									<label class="editContent">
+										<span class="fa fa-bus" aria-hidden="true"></span>
+										Trip Start
+									</label>
+									<input class="date has Datepicker" id="tripStart" type="text" value="Start Date"
+										onfocus="this.value = '';" onblur="if (this.value == '') 
+										{this.value = '21/11/2017';}" required="" placeholder="Start Date" required>
+								</div>
+
+								<!-- Row 3: Trip End, No. of Travellers -->
+								<div class="col-md-4 col-sm-6 form-group">
+									<label><span class="fa fa-bus" aria-hidden="true"></span> Trip End</label>
+									<input class="date has Datepicker" id="tripEnd" type="text"
+										onfocus="this.value = '';" onblur="if (this.value == '') 
+										{this.value = '25/11/2017';}" required="" placeholder="End Date" required>
+								</div>
+
+								<div class="col-md-4 col-sm-6 form-group">
+									<label><span class="fa fa-users" aria-hidden="true"></span> No. of
+										Travellers</label>
+									<select class="form-control" id="travellers">
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5 or more</option>
+									</select>
+								</div>
+
+								<!-- Submit Button (Moved to right and full width on small screens) -->
+								<div class="col-md-12 text-md-right text-center form-group" style="text-align: right;">
+
+									<input type="submit" value="Book Now" class="btn btn-success"
+										style="width: auto; padding: 10px 20px; margin-right: 0;">
+								</div>
+
+
+								<div class="clearfix"></div>
+							</form>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+			<!-- //banner-info-->
+			<div class="slides-box">
+				<ul class="slides">
+					<li
+						style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/s1.jpg) no-repeat; background-size: cover;">
+					</li>
+					<li
+						style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/s2.jpg) no-repeat; background-size: cover;">
+					</li>
+					<li
+						style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/s3.jpg) no-repeat; background-size: cover;">
+					</li>
+					<li
+						style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/s4.jpg) no-repeat; background-size: cover;">
+					</li>
+					<li
+						style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(images/s5.jpg) no-repeat; background-size: cover;">
+					</li>
+				</ul>
+			</div>
+
+			<!-- //banner  -->
+		</div>
+	</div>
+	<!--/banner-section-->
+
+	<!-- about -->
+	<div class="w3ls-section w3-about clearfix" id="about">
+		<div class="container">
+			<div class="w3ls-title">
+				<h3 class="title">About Us</h3>
+			</div>
+			<div class="col-md-4 about-top">
+				<h4>Welcome to Shakti Travels</h4>
+				<h5>Your Trusted Travel Partner in Odisha</h5>
+				<p>We are one of the leading tour operators in Odisha, offering a wide range of travel packages that
+					cater to all your travel needs. From religious trips to Puri, cultural tours to Konark, and wildlife
+					safaris to Simlipal, we ensure a memorable experience. With over a decade of expertise, we guarantee
+					you the best in travel services.</p>
+				<!-- <a href="#" class="button button--nina" data-text="Learn more" data-toggle="modal"
+					data-target="#myModal">Read More</a> -->
+			</div>
+			<div class="col-md-4 middle-img">
+				<img src="images/package1.jpg" alt="about image" />
+			</div>
+			<div class="col-md-4 about-top last">
+				<h4>Watch our Video</h4>
+				<div class="text-center">
+					<a class="#" data-toggle="modal" data-target="#myModal1">
+						<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+					</a>
+				</div>
+				<!-- Modal5 -->
+				<div class="modal fade" id="myModal1" tabindex="-1" role="dialog">
+					<div class="modal-dialog">
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<iframe src="https://youtu.be/Uqmc0891L2U"></iframe>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- //Modal5 -->
+
+				<p>Discover the beauty of Odisha with us. Watch our recent video showcasing the diverse landscapes, rich
+					heritage, and vibrant culture of the state.</p>
+			</div>
+			<div class="clearfix"></div>
+			<div class="agileinfo-about-grid text-center" id="services-grid">
+				<!-- The content here will be populated dynamically from Firebase -->
+			</div>
+
+		</div>
+	</div>
+	<!-- //about -->
+
+	<!-- travel -->
+	<div class="travel">
+		<div class="container">
+			<h4>Odisha Travel</h4>
+			<h3>See it once, cherish it forever</h3>
+			<p>Discover Odisha's cultural richness, stunning landscapes, and vibrant festivals with us. From heritage
+				tours to adventure trips, we offer experiences that will last a lifetime.</p>
+			<div class="text-center">
+				<a class="#" data-toggle="modal" data-target="#myModal1">
+					<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+				</a>
+			</div>
+		</div>
+	</div>
+	<!-- //travel -->
+
+	<!-- popular packages -->
+	<div class="packages" id="packages">
+		<div class="container">
+			<div class="wthree_head_section">
+				<h3 class="title">Popular Packages</h3>
+			</div>
+			<div id="packages-grid" class="packages_grids">
+
+				<div class="packages_grid2">
+					<div class="col-md-6 package1">
+						<img src="images/package6.jpg" alt="package1" />
+					</div>
+					<div class="col-md-3 package1">
+						<img src="images/package4.jpg" alt="package1" />
+						<h4>Thailand Summer Beach</h4>
+						<h5>850$</h5>
+						<a href="#small-dialog" class="w3_agileits_sign_up2 popup-with-zoom-anim ab scroll">Book Now</a>
+					</div>
+					<div class="col-md-3 package1">
+						<img src="images/package5.jpg" alt="package1" />
+						<h4>Japan Imperial Museum</h4>
+						<h5>210$</h5>
+						<a href="#small-dialog" class="w3_agileits_sign_up2 popup-with-zoom-anim ab scroll">Book Now</a>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+
+				<!-- Packages will be dynamically inserted here from Firestore -->
+			</div>
+		</div>
+	</div>
+	<!-- //popular packages -->
+
+	<!-- agile_testimonials -->
+	<div class="agile_testimonials" id="testimonials">
+		<div class="container">
+			<div class="wthree_head_section">
+				<h3 class="title">Testimonials</h3>
+			</div>
+
+			<!-- Loader -->
+			<div id="loader" style="display: none; text-align: center;">
+				<img src="images/loader.gif" alt="Loading..." />
+			</div>
+
+			<!-- Testimonials content -->
+			<div class="agile_wthree_inner_grids">
+				<div class="test-agile_main_section">
+					<div id="owl-demo2" class="owl-carousel">
+						<!-- Testimonials will be dynamically inserted here -->
+
+						<div class="agile">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- //agile_testimonials -->
+
+	<!-- stats -->
+	<div class="stats" id="stats">
+		<div class="container">
+			<h3 class="title">Our Stats</h3>
+			<div class="agileits_stats_grids">
+				<div class="col-md-3 col-xs-4 agileinfo_stats">
+					<div class="agileinfo_stats_grid">
+						<p class="counter">5000</p>
+						<h3>Happy Travellers</h3>
+					</div>
+				</div>
+				<div class="col-md-3 col-xs-4 agileinfo_stats mid-w3l-stat">
+					<div class="agileinfo_stats_grid">
+						<p class="counter">50</p>
+						<h3>Destinations Covered</h3>
+					</div>
+				</div>
+				<div class="col-md-3 col-xs-4 agileinfo_stats mid-w3l-stat">
+					<div class="agileinfo_stats_grid">
+						<p class="counter">25</p>
+						<h3>Years of Experience</h3>
+					</div>
+				</div>
+				<div class="col-md-3 col-xs-4 agileinfo_stats mid-w3l-stat">
+					<div class="agileinfo_stats_grid">
+						<p class="counter">500</p>
+						<h3>Customized Tours</h3>
+					</div>
+				</div>
+				<div class="clearfix"> </div>
+			</div>
+
+		</div>
+	</div>
+	<!-- //stats -->
+
+	<!-- contact -->
+	<div class="w3ls-section contact" id="contact">
+		<div class="container">
+			<div class="w3ls-title">
+				<h3 class="title">Get in Touch</h3>
+			</div>
+			<div class="w3ls_map">
+				<iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+					src="https://maps.google.com/maps?width=100%25&amp;height=300&amp;hl=en&amp;q=20.2508668,85.8066724+(Unit%203,%20Kharvela%20Nagar,%20Bhubaneswar,%20Odisha%20751001)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a
+						href="https://www.gps.ie/">gps trackers</a></iframe>
+			</div>
+
+
+			<div class="contact_wthreerow agileits-w3layouts">
+
+				<div class="col-md-7 w3l_contact_form">
+					<h4>Contact Form</h4>
+					<form id="contactForm" action="#" method="post">
+						<input type="text" id="contactName" name="Name" placeholder="Name" required>
+						<input type="email" id="contactEmail" name="Email" placeholder="Email" required>
+						<input type="text" id="contactPhone" name="Phone" placeholder="Phone" required>
+						<textarea id="contactMessage" name="Message" placeholder="Message..." required></textarea>
+						<input type="submit" value="Submit">
+					</form>
+				</div>
+
+				<div class="col-md-5 agileits_w3layouts_contact_gridl">
+					<div class="agileits_mail_grid_right_grid">
+						<h4>Contact Info</h4>
+						<p>If you have any questions or would like to book a tour, feel free to get in touch with us.
+							We're here to help make your Odisha trip unforgettable.</p>
+						<div id="contact-info">
+							<!-- Contact info will be dynamically inserted here -->
+						</div>
+					</div>
+				</div>
+
+
+				<div class="clearfix"> </div>
+			</div>
+		</div>
+	</div>
+	<!-- //contact -->
+
+	<!-- footer start here -->
+	<div class="footer-agile">
+		<!-- newsletter -->
+		<div class="footer-top">
+			<div class="agile-leftmk">
+				<form id="subscribeForm">
+					<input type="email" id="subscribeEmail" placeholder="Enter Your Email Address" name="email"
+						required="">
+					<input type="submit" value="Subscribe">
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+		<!-- //newsletter -->
+		<div class="container">
+			<div class="footer-btm-agileinfo">
+				<div class="col-md-3 col-xs-3 footer-grid w3social">
+					<h3>About us</h3>
+					<p class="footer-p1">We are Odisha’s premier travel service, offering a wide variety of tour
+						packages to explore the wonders of this beautiful state. From sacred temples to serene beaches,
+						we cover all the must-see spots.</p>
+					<a href="#">read more <span class="fa fa-long-arrow-right"></span></a>
+				</div>
+				<div class="col-md-3 col-xs-3 footer-grid">
+					<h3>Contact Info</h3>
+					<div id="footer-contact-info">
+						<!-- Footer contact info will be dynamically inserted here -->
+					</div>
+				</div>
+
+				<div class="col-md-2 col-xs-3 footer-grid w3social">
+					<h3>Quick Links</h3>
+					<ul>
+						<li><a href="index.html">Home</a></li>
+						<li><a href="#about" class="scroll">About</a></li>
+						<li><a href="#packages" class="scroll">Packages</a></li>
+						<li><a href="#testimonials" class="scroll">Happy Customers</a></li>
+						<li><a href="#contact" class="scroll">Contact Us</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4 col-xs-3 footer-grid">
+					<h3>Latest Tweets</h3>
+					<ul class="tweet-agile">
+						<li>
+							<i class="fa fa-twitter-square" aria-hidden="true"></i>
+							<p class="tweet-p1"><a href="mailto:support@company.com">@lordjagannathtravels</a>
+								"Experience the magic of Odisha with our exclusive tours!" <a
+									href="#">http://bit.ly/odishatours</a></p>
+							<p class="tweet-p2">Posted 2 days ago.</p>
+						</li>
+						<li>
+							<i class="fa fa-twitter-square" aria-hidden="true"></i>
+							<p class="tweet-p1"><a href="mailto:support@company.com">@lordjagannathtravels</a> "Join us
+								for a once-in-a-lifetime adventure to Bhitarkanika!" <a
+									href="#">http://bit.ly/odishatours</a></p>
+							<p class="tweet-p2">Posted 4 days ago.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="clearfix"> </div>
+			</div>
+			<div class="footer-agilem">
+				<div class="col-sm-8 col-xs-9 copy-w3lsright">
+					<p>© 2024 Shakti Tours and Travels || Design by <a href="http://w3layouts.com"
+							target="_blank">W3Layouts</a>. All rights reserved. </p>
+
+
+				</div>
+				<div class="col-sm-4 col-xs-3 social-w3licon">
+					<a href="#" class="social-button twitter"><i class="fa fa-twitter"></i></a>
+					<a href="#" class="social-button facebook"><i class="fa fa-facebook"></i></a>
+					<a href="#" class="social-button google"><i class="fa fa-google-plus"></i></a>
+					<a href="#" class="social-button dribbble"><i class="fa fa-dribbble"></i></a>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+	<!-- //footer end here -->
+
+	<!-- popup signup form -->
+	<div class="wthree_pop_up">
+		<div id="small-dialog" class="mfp-hide agile_signup_form">
+			<h2 style="text-align: center;">BOOK OUR TRAVEL TOURIST</h2>
+			<form id="popupBookingForm" method="post" style="max-width: 100%; margin: 0 auto;">
+				<!-- Traveller Name -->
+				<div class="form-control" style="margin-bottom: 15px; display: flex; flex-wrap: wrap;">
+					<label class="header1" style="width: 100%; max-width: 150px; margin-right: 10px;">Traveller Name
+					</label>
+					<input type="text" id="popupTravellerName" name="firstname" placeholder="Full Name" required
+						style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 160px);">
+				</div>
+
+				<!-- Travel Location -->
+				<div class="form-control" style="margin-bottom: 15px; display: flex; flex-wrap: wrap;">
+					<label class="editContent" style="width: 100%; max-width: 150px; margin-right: 10px;">Travel
+						Location</label>
+					<select class="form-control" id="popupDestination"
+						style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 160px);">
+						<option>Puri</option>
+						<option>Konark</option>
+						<option>Cuttack</option>
+						<option>Chilika Lake</option>
+					</select>
+				</div>
+
+				<!-- Email Address -->
+				<div class="form-control" style="margin-bottom: 15px; display: flex; flex-wrap: wrap;">
+					<label class="header1" style="width: 100%; max-width: 150px; margin-right: 10px;">Email Address
+					</label>
+					<input type="email" id="popupEmail" name="email" placeholder="mail@example.com" required
+						style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 160px);">
+				</div>
+
+				<!-- Phone Number -->
+				<div class="form-control" style="margin-bottom: 15px; display: flex; flex-wrap: wrap;">
+					<label class="header1" style="width: 100%; max-width: 150px; margin-right: 10px;">Phone Number
+					</label>
+					<input type="tel" id="popupPhone" name="tel" placeholder="Phone number" required
+						style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 160px);">
+				</div>
+
+				<!-- Journey Start Date -->
+				<div class="form-control" style="margin-bottom: 15px; display: flex; flex-wrap: wrap;">
+					<label class="editContent" style="width: 100%; max-width: 150px; margin-right: 10px;">Journey start
+						date </label>
+					<input class="date has Datepicker" id="popupTripStart" type="text" placeholder="Start Date" required
+						style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 160px);">
+				</div>
+
+				<!-- Journey Return Date -->
+				<div class="form-control" style="margin-bottom: 15px; display: flex; flex-wrap: wrap;">
+					<label class="editContent" style="width: 100%; max-width: 150px; margin-right: 10px;">Journey return
+						date </label>
+					<input class="date has Datepicker" id="popupTripEnd" type="text" placeholder="Return Date" required
+						style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 160px);">
+				</div>
+
+				<!-- No. of Travellers -->
+				<div class="form-control" style="margin-bottom: 15px; display: flex; flex-wrap: wrap;">
+					<label class="editContent" style="width: 100%; max-width: 150px; margin-right: 10px;">No: of
+						travellers </label>
+					<select class="form-control" id="popupTravellers"
+						style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 160px);">
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5 or more</option>
+					</select>
+				</div>
+
+				<!-- Submit Button -->
+				<div class="w3_submit" style="text-align: center;">
+					<input type="submit" class="register" value="Submit"
+						style="background-color: #d9534f; border: none; color: white; padding: 10px 20px; font-size: 16px; border-radius: 4px;">
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+		window.onload = function () {
+			document.getElementById("password1").onchange = validatePassword;
+			document.getElementById("password2").onchange = validatePassword;
+		}
+		function validatePassword() {
+			var pass2 = document.getElementById("password2").value;
+			var pass1 = document.getElementById("password1").value;
+			if (pass1 != pass2)
+				document.getElementById("password2").setCustomValidity("Passwords Don't Match");
+			else
+				document.getElementById("password2").setCustomValidity('');
+			//empty string means no validation error
+		}
+	</script>
+	<!-- //popup signup form -->
+
+	<!-- js -->
+	<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+	<!-- //js -->
+
+	<!-- Stats-Number-Scroller-Animation-JavaScript -->
+	<script src="js/waypoints.min.js"></script>
+	<script src="js/counterup.min.js"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$('.counter').counterUp({
+				delay: 10,
+				time: 1000
+			});
+		});
+	</script>
+	<!-- //Stats-Number-Scroller-Animation-JavaScript -->
+
+	<!-- Calendar -->
+	<link rel="stylesheet" href="css/jquery-ui.css" />
+	<script src="js/jquery-ui.js"></script>
+	<script>
+		$(function () {
+			$("#tripStart,#tripEnd").datepicker();
+		});
+	</script>
+	<!-- //Calendar -->
+
+
+	<!-- pop-up-box -->
+	<script src="js/jquery.magnific-popup.js" type="text/javascript"></script>
+	<script>
+		$(document).ready(function () {
+			$('.popup-with-zoom-anim').magnificPopup({
+				type: 'inline',
+				fixedContentPos: false,
+				fixedBgPos: true,
+				overflowY: 'auto',
+				closeBtnInside: true,
+				preloader: false,
+				midClick: true,
+				removalDelay: 300,
+				mainClass: 'my-mfp-zoom-in'
+			});
+		});
+	</script>
+	<!--//pop-up-box -->
+
+	<!-- for banner js file-->
+	<script src="js/poposlides.js"></script>
+	<script>
+		$(".slides").poposlides();
+	</script>
+	<!-- //for banner js file-->
+
+	<!-- requried-jsfiles-for owl --> <!-- testimonials -->
+	<script src="js/owl.carousel.js"></script>
+	<script>
+		$(document).ready(function () {
+			$("#owl-demo2").owlCarousel({
+				items: 1,
+				lazyLoad: false,
+				autoPlay: true,
+				navigation: false,
+				navigationText: false,
+				pagination: true,
+			});
+		});
+	</script>
+	<!-- //requried-jsfiles-for owl --> <!-- //testimonials -->
+
+	<!-- start-smoth-scrolling -->
+	<script src="js/SmoothScroll.min.js"></script>
+
+	<script type="text/javascript" src="js/move-top.js"></script>
+	<script type="text/javascript" src="js/easing.js"></script>
+	<script type="text/javascript">
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+
+	<!-- here stars scrolling icon -->
+	<!-- <script type="text/javascript">
+		$(document).ready(function () {
+			/*
+				var defaults = {
+				containerID: 'toTop', // fading element id
+				containerHoverID: 'toTopHover', // fading element hover id
+				scrollSpeed: 1200,
+				easingType: 'linear' 
+				};
+			*/
+
+			$().UItoTop({ easingType: 'easeOutQuart' });
+
+		});
+	</script> -->
+	<!-- //here ends scrolling icon -->
+
+	<!-- Scrolling Nav JavaScript -->
+	<script src="js/scrolling-nav.js"></script>
+	<!-- //fixed-scroll-nav-js -->
+
+	<!-- for bootstrap working -->
+	<script src="js/bootstrap.js"></script>
+	<!-- //for bootstrap working -->
+	<!-- New "Call to Book" button fixed at the bottom right -->
+	<button type="button" class="call-to-book-btn" onclick="openDialer()">
+		Call to Book
+	</button>
+
+</body>
+
+</html>
